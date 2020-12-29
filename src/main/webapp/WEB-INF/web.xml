@@ -4,4 +4,20 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+    <servlet-name>IndexServlet</servlet-name>
+    <servlet-class>servlet.IndexServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>IndexServlet</servlet-name>
+    <url-pattern>/index.do</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>PlacesServlet</servlet-name>
+    <servlet-class>servlet.PlacesServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PlacesServlet</servlet-name>
+    <url-pattern>/places.do</url-pattern>
+  </servlet-mapping>
 </web-app>
