@@ -7,6 +7,9 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <%
+        Collection<Halls> hallsCollection = PsqlStore.instOf().findAllHalls();
+    %>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,6 +26,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Работа мечты</title>
     <link rel="icon" type="image/png" href="favicon.ico"/>
+    <script>function takeData() {
+        var allInputs = $("input[type=checkbox]").filter(':checked');
+        var selected = '';
+        var names = '';
+        for (var i = 0, max = allInputs.length; i < max; i++){
+            if (selected != '') {
+                selected += ';';
+                names += ';';
+            }
+            selected += allInputs[i].id;
+            names += allInputs[i].value;
+        }
+        console.log(selected);
+        var kol = selected.split(';').length;
+        var texts = "Выбрано мест: "+ kol + "<br>На сумму: " + (500 * kol) + "<br> Выбраны места: " + names;
+        document.getElementById("calc").innerHTML = texts;
+        document.getElementById("calc").setAttribute("value", selected);
+    }
+
+    var mainHallId=1;
+
+
+        function starter(hallId) {
+            mainHallId = hallId;
+            openHall();
+        };
+        function openHall() {
+            console.log("run " + mainHallId);
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/cinema/places.do",
+                data: "hallId=" + mainHallId,
+                dataType: 'text',
+                origin: "http://localhost:8081"
+            })
+                .done(function (data) {
+                    document.getElementById("cardbody").innerHTML= data;
+                })
+                .fail(function (err) {
+                    alert("err" + err.message);
+                })
+            setTimeout(function(){
+                openHall();
+            }, 60000);
+        };
+    </script>
 </head>
 <style>
     body {
@@ -63,39 +112,43 @@
         .sidenav a {font-size: 18px;}
     }
 </style>
-<body >
+<body onload="openHall()">
 
-<%
-    Collection<Halls> hallsCollection = PsqlStore.instOf().findAllHalls();
-%>
+
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" ></script>
-<script>
-    function openHall(hallId) {
-        //https://ru.stackoverflow.com/questions/836360/Как-остановить-уже-запущенный-ранее-таймер
-        $.ajax({
-            type: "GET",
-            url: "http://localhost:8080/cinema/places.do",
-            data: "hallId=" + hallId,
-            dataType: 'text',
-            origin: "http://localhost:8081"
-        })
-            .done(function (data) {
-                document.getElementById("cardbody").innerHTML= data;
-            })
-            .fail(function (err) {
-                alert("err" + err.message);
-            })
-        setTimeout(openHall, 10000, hallId);
-    }
-</script>
+
 <div class="sidenav">
     <label>Залы</label>
     <% for (Halls hall : hallsCollection) { %>
-    <a onclick="openHall('<%=hall.getId()%>')"><%=hall.getName()%></a>
+    <a onclick="starter('<%=hall.getId()%>')"><%=hall.getName()%></a>
     <% } %>
 </div>
 <div class="main" id="cardbody">
 
 </div>
+<dic class="main" is="btn_place">
+<button type="button" class="btn btn-info btn-lg" data-toggle="modal" onclick="takeData()" data-target="#myModal">Оплатить</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <form action="" method="post"
+                  enctype="multipart/form-data" >
+                <div class="form-group">
+                    <label id="calc" value="0">Тут будет инфа о покупке</label><br>
+                    <label>Имя</label>
+                    <input type="text" class="form-control" name="name" value="">
+                    <label>Телефон</label>
+                    <input type="text" class="form-control" name="phone" value="">
+                </div>
+                <button type="submit" class="btn btn-primary">Оплатить</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</dic>
 </body>
 </html>

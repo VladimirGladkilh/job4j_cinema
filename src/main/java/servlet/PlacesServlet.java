@@ -54,7 +54,7 @@ public class PlacesServlet extends HttpServlet {
                 sj.add("</tr>");
             }
             sj.add("</table>");
-        } else {
+        } else if (hallId > 0) {
             sj.add("<h3>В зале нет стульев</h3>");
         }
 
@@ -62,8 +62,8 @@ public class PlacesServlet extends HttpServlet {
     }
 
     private String generateCheckBox(Places places) {
-        String checkBox = String.format("<input type=\"checkbox\" id=\"{}\" {}>",
-                places.getId(), places.isBussy() ? "checked disabled" : "");
+        String checkBox = String.format("<input type=\"checkbox\" id=\"%s\" %s value=\"%s\"/>",
+                places.getId(), places.isBussy() ? "checked disabled" : "", places.getName());
         return  checkBox;
     }
 }
