@@ -20,4 +20,12 @@
     <servlet-name>PlacesServlet</servlet-name>
     <url-pattern>/places.do</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>PaymentServlet</servlet-name>
+    <servlet-class>servlet.PaymentServlet</servlet-class>    
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PaymentServlet</servlet-name>
+    <url-pattern>/payment.do</url-pattern>
+  </servlet-mapping>
 </web-app>

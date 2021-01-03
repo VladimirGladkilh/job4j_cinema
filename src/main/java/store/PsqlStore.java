@@ -293,7 +293,21 @@ public class PsqlStore implements Store {
 
     @Override
     public Places findPlacesById(int id) {
-        return null;
+        Places places = null;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement("SELECT * FROM places where id = ?")
+        ) {
+            ps.setInt(1, id);
+            try (ResultSet it = ps.executeQuery()) {
+                if (it.next()) {
+                    places = new Places(it.getInt("id"), it.getString("name"), it.getInt("hallid"),
+                            it.getInt("x"), it.getInt("y"), it.getBoolean("bussy"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return places;
     }
 
     @Override

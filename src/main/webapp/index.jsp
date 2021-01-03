@@ -27,22 +27,22 @@
     <title>Работа мечты</title>
     <link rel="icon" type="image/png" href="favicon.ico"/>
     <script>function takeData() {
-        var allInputs = $("input[type=checkbox]").filter(':checked');
+        var allInputs = $("input[type=checkbox]").filter(':checked:enabled');
         var selected = '';
         var names = '';
         for (var i = 0, max = allInputs.length; i < max; i++){
-            if (selected != '') {
-                selected += ';';
-                names += ';';
-            }
-            selected += allInputs[i].id;
-            names += allInputs[i].value;
+                if (selected != '') {
+                    selected += ';';
+                    names += ';';
+                }
+                selected += allInputs[i].id;
+                names += allInputs[i].value;
         }
         console.log(selected);
         var kol = selected.split(';').length;
         var texts = "Выбрано мест: "+ kol + "<br>На сумму: " + (500 * kol) + "<br> Выбраны места: " + names;
         document.getElementById("calc").innerHTML = texts;
-        document.getElementById("calc").setAttribute("value", selected);
+        document.getElementById("placesIds").setAttribute("value", selected);
     }
 
     var mainHallId=1;
@@ -134,10 +134,10 @@
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
-            <form action="" method="post"
-                  enctype="multipart/form-data" >
+            <form action="<%=request.getContextPath()%>/payment.do" method="post">
                 <div class="form-group">
-                    <label id="calc" value="0">Тут будет инфа о покупке</label><br>
+                    <label id="calc" >Тут будет инфа о покупке</label><br>
+                    <input type="text" class="form-control" name="places" id="placesIds" value="">
                     <label>Имя</label>
                     <input type="text" class="form-control" name="name" value="">
                     <label>Телефон</label>

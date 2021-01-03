@@ -13,6 +13,12 @@ public class Accounts {
         this.phone = phone;
     }
 
+    public Accounts(String name, String phone) {
+        this.id = 0;
+        this.name = name;
+        this.phone = phone;
+    }
+
     public int getId() {
         return id;
     }
