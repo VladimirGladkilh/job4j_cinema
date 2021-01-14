@@ -18,6 +18,7 @@ import java.util.Properties;
 
 public class PsqlStore implements Store {
     private final BasicDataSource pool = new BasicDataSource();
+    private final Logger log = LoggerFactory.getLogger(PsqlStore.class);
 
     private PsqlStore() {
         Properties cfg = new Properties();
@@ -26,13 +27,13 @@ public class PsqlStore implements Store {
         )) {
             cfg.load(io);
         } catch (Exception e) {
-            System.out.println("30   " + e);
+            log.error("Ошибка чтения параметров БД", e);
             throw new IllegalStateException(e);
         }
         try {
             Class.forName(cfg.getProperty("jdbc.driver"));
         } catch (Exception e) {
-            System.out.println("37   " + e);
+            log.error("Ошибка чтения параметров драйвера ", e);
             throw new IllegalStateException(e);
         }
         pool.setDriverClassName(cfg.getProperty("jdbc.driver"));
@@ -65,9 +66,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            System.out.println("pizdec");
-            e.printStackTrace();
-
+            log.error("Ошибка при поиске залов", e);
         }
         return hallsList;
     }
@@ -89,7 +88,7 @@ public class PsqlStore implements Store {
             ps.setInt(2, halls.getId());
             ps.execute();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при обновлении залов", e);
         }
     }
 
@@ -105,7 +104,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при создании залов", e);
         }
     }
 
@@ -122,7 +121,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при поиске залов по ИД", e);
         }
         return halls;
     }
@@ -134,8 +133,8 @@ public class PsqlStore implements Store {
         ) {
             ps.setInt(1, halls.getId());
             ps.executeQuery();
-        } catch (SQLException s) {
-            s.printStackTrace();
+        } catch (SQLException e) {
+            log.error("Ошибка при поиске удалении", e);
         }
     }
 
@@ -151,7 +150,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при поиске аккаунтов", e);
         }
         return accounts;
     }
@@ -174,7 +173,7 @@ public class PsqlStore implements Store {
             ps.setInt(3, accounts.getId());
             ps.execute();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при обновлении аккаунтов", e);
         }
     }
 
@@ -191,7 +190,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при создании аккаунтов", e);
         }
     }
 
@@ -208,7 +207,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при поиске аккаунтов по ИД", e);
         }
         return accounts;
     }
@@ -221,7 +220,7 @@ public class PsqlStore implements Store {
             ps.setInt(1, accounts.getId());
             ps.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Ошибка при удалении аккаунтов", e);
         }
     }
 
@@ -239,7 +238,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при поиске мест", e);
         }
         return places;
     }
@@ -269,7 +268,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при создании мест", e);
         }
     }
 
@@ -287,7 +286,7 @@ public class PsqlStore implements Store {
             ps.execute();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при обновлении мест", e);
         }
     }
 
@@ -305,7 +304,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при поиске мест по ИД", e);
         }
         return places;
     }
@@ -318,7 +317,7 @@ public class PsqlStore implements Store {
             ps.setInt(1, places.getId());
             ps.executeQuery();
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Ошибка при удалении мест", e);
         }
     }
 
@@ -338,7 +337,7 @@ public class PsqlStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Ошибка при поиске мест по ИД зала", e);
         }
         return places;
     }

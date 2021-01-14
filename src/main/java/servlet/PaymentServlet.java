@@ -19,9 +19,7 @@ public class PaymentServlet  extends HttpServlet {
         String placesIds = req.getParameter("places");
         Accounts accounts = new Accounts(name, phone);
         PsqlStore.instOf().save(accounts);
-        System.out.println("placesIds" + placesIds + name);
         Arrays.stream(placesIds.split(";")).forEach(s -> {
-            System.out.println(s);
             Places places = PsqlStore.instOf().findPlacesById(Integer.parseInt(s));
             places.setBussy(true);
             PsqlStore.instOf().save(places);

@@ -43,7 +43,6 @@ public class PsqlStoreMain {
                 sj.add("</tr>");
             }
             sj.add("</table>");
-            System.out.println(sj.toString());
         }
 
     private static String generateCheckBox(Places places) {
