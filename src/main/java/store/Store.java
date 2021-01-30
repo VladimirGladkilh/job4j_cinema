@@ -3,6 +3,7 @@ package store;
 import model.Accounts;
 import model.Halls;
 import model.Places;
+import model.Ticket;
 
 import java.util.Collection;
 
@@ -21,6 +22,8 @@ public interface Store {
 
     Accounts findAccountsById(int id);
 
+    Accounts findAccountsByPhone(String phone);
+
     void delete(Accounts accounts);
 
     Collection<Places> findAllPlaces();
@@ -32,4 +35,12 @@ public interface Store {
     void delete(Places places);
 
     Collection<Places> findPlacesByHalls(int hallsId);
+
+    Collection<Ticket> findAllTickets();
+
+    void save(Ticket ticket);
+
+
+    void delete(Ticket ticket);
+
 }

@@ -17,3 +17,11 @@ CREATE TABLE places (
    y INT,
    bussy BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE tickets (
+id SERIAL PRIMARY KEY,
+userid int,
+place int
+);
+CREATE UNIQUE INDEX uq_tickets
+  ON tickets(userid, place);

@@ -2,6 +2,7 @@ package store;
 
 import model.*;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +22,7 @@ public class PsqlStore implements Store {
     private final Logger log = LoggerFactory.getLogger(PsqlStore.class);
 
     private PsqlStore() {
+        BasicConfigurator.configure();
         Properties cfg = new Properties();
         try (BufferedReader io = new BufferedReader(
                 new FileReader("db.properties")
@@ -213,6 +215,24 @@ public class PsqlStore implements Store {
     }
 
     @Override
+    public Accounts findAccountsByPhone(String phone) {
+        Accounts accounts = null;
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement("SELECT * FROM accounts where phone = ?")
+        ) {
+            ps.setString(1, phone);
+            try (ResultSet it = ps.executeQuery()) {
+                if (it.next()) {
+                    accounts = new Accounts(it.getInt("id"), it.getString("name"), it.getString("phone"));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Ошибка при поиске аккаунтов по ИД", e);
+        }
+        return accounts;
+    }
+
+    @Override
     public void delete(Accounts accounts) {
         try (Connection cn = pool.getConnection();
              PreparedStatement ps =  cn.prepareStatement("DELETE FROM accounts where id = ?")
@@ -340,5 +360,63 @@ public class PsqlStore implements Store {
             log.error("Ошибка при поиске мест по ИД зала", e);
         }
         return places;
+    }
+
+    @Override
+    public Collection<Ticket> findAllTickets() {
+        return null;
+    }
+
+    @Override
+    public void save(Ticket ticket) {
+        if (ticket.getId() == 0) {
+            create(ticket);
+        } else {
+            update(ticket);
+        }
+    }
+
+    private void update(Ticket ticket) {
+        try (Connection cn = pool.getConnection();
+
+             PreparedStatement ps =  cn.prepareStatement("UPDATE tickets set userid = ?, place = ? where id = ?", PreparedStatement.RETURN_GENERATED_KEYS)
+        ) {
+            ps.setInt(1, ticket.getAccount().getId());
+            ps.setInt(2, ticket.getPlace().getId());
+            ps.setInt(3, ticket.getId());
+            ps.execute();
+
+        } catch (Exception e) {
+            log.error("Ошибка при обновлении покупки", e);
+        }
+    }
+
+    private void create(Ticket ticket) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement("INSERT INTO tickets(userid, place) VALUES (?, ?)", PreparedStatement.RETURN_GENERATED_KEYS)
+        ) {
+            ps.setInt(1, ticket.getAccount().getId());
+            ps.setInt(2, ticket.getPlace().getId());
+            ps.execute();
+            try (ResultSet id = ps.getGeneratedKeys()) {
+                if (id.next()) {
+                    ticket.setId(id.getInt(1));
+                }
+            }
+        } catch (Exception e) {
+            log.error("Ошибка при создании покупки", e);
+        }
+    }
+
+    @Override
+    public void delete(Ticket ticket) {
+        try (Connection cn = pool.getConnection();
+             PreparedStatement ps =  cn.prepareStatement("DELETE FROM tickets where id = ?")
+        ) {
+            ps.setInt(1, ticket.getId());
+            ps.executeQuery();
+        } catch (SQLException e) {
+            log.error("Ошибка при удалении покупки", e);
+        }
     }
 }
